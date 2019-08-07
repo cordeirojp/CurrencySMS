@@ -1,4 +1,4 @@
-const request = require('request-promise-native')
+let request = require('request-promise-native')
 
 exports.handler = function(event, context, callback) {
     const { CURRENCY_FROM, CURRENCY_TO, TWILIO_ACCOUNT, TWILIO_API_KEY, SEND_SMS_FROM, SEND_SMS_TO } = process.env
@@ -37,5 +37,3 @@ exports.handler = function(event, context, callback) {
 
     callback(null, {"message": "Successfully executed"});
 }
-
-module.exports = { handler }

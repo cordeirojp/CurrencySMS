@@ -22,7 +22,7 @@
         "children": [],
         "isRemovable": true,
         "filePath": "CurrencySMS/lambda.js",
-        "code": "const request = require('request-promise-native')\n\nexports.handler = function(event, context, callback) {\n    \n  request.get({\n    url: `http://api.fixer.io/latest?symbols=${CURRENCY_TO}&base=${CURRENCY_FROM}`,\n    json: true\n  })\n    .then((data) => {\n      const rate = data.rates[CURRENCY_TO]\n      console.log(`Fetched exchange rate for ${CURRENCY_FROM} -> ${CURRENCY_TO}`, rate)\n\n      // send sms with current exchange rate\n      return request.post({\n        url: `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT}/Messages.json`,\n        json: true,\n        'auth': {\n          'user': TWILIO_ACCOUNT,\n          'pass': TWILIO_API_KEY\n        },\n        form: {\n          From: SEND_SMS_FROM,\n          To: SEND_SMS_TO,\n          Body: `Today you get ${rate} ${CURRENCY_TO} for 1 ${CURRENCY_FROM}`\n        }\n      })\n    })\n    .then((data) => {\n      console.log(`Rate successfully sent through SMS to ${SEND_SMS_TO}`)\n      return callback(null, true)\n    })\n    .catch((err) => {\n      console.error(err)\n      return callback(err)\n    })\n\n    callback(null, {\"message\": \"Successfully executed\"});\n}",
+        "code": "const request = require('request-promise-native')\n\nexports.handler = function(event, context, callback) {\n    \n  request.get({\n    url: `http://api.fixer.io/latest?symbols=${CURRENCY_TO}&base=${CURRENCY_FROM}`,\n    json: true\n  })\n    .then((data) => {\n      const rate = data.rates[CURRENCY_TO]\n      console.log(`Fetched exchange rate for ${CURRENCY_FROM} -> ${CURRENCY_TO}`, rate)\n\n      // send sms with current exchange rate\n      return request.post({\n        url: `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT}/Messages.json`,\n        json: true,\n        'auth': {\n          'user': TWILIO_ACCOUNT,\n          'pass': TWILIO_API_KEY\n        },\n        form: {\n          From: SEND_SMS_FROM,\n          To: SEND_SMS_TO,\n          Body: `Today you get ${rate} ${CURRENCY_TO} for 1 ${CURRENCY_FROM}`\n        }\n      })\n    })\n    .then((data) => {\n      console.log(`Rate successfully sent through SMS to ${SEND_SMS_TO}`)\n      return callback(null, true)\n    })\n    .catch((err) => {\n      console.error(err)\n      return callback(err)\n    })\n\n    callback(null, {\"message\": \"Successfully executed\"});\n}\n\nmodule.exports = { handler }",
         "config": {
           "runtime": "nodejs8.10",
           "handler": "handler",
@@ -52,6 +52,54 @@
         "shouldPersist": false,
         "displayOnly": false,
         "editable": false
+      },
+      {
+        "lambdaId": "all",
+        "varKey": "CURRENCY_TO",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": true
+      },
+      {
+        "lambdaId": "all",
+        "varKey": "CURRENCY_FROM",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": true
+      },
+      {
+        "lambdaId": "all",
+        "varKey": "TWILIO_ACCOUNT",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": true
+      },
+      {
+        "lambdaId": "all",
+        "varKey": "TWILIO_API_KEY",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": true
+      },
+      {
+        "lambdaId": "all",
+        "varKey": "SEND_SMS_FROM",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": true
+      },
+      {
+        "lambdaId": "all",
+        "varKey": "SEND_SMS_TO",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": true
       }
     ],
     "packageJSON": {
@@ -71,7 +119,7 @@
     "projectRegion": "eu-west-1",
     "platform": "AWS",
     "platformRegions": {},
-    "lastSave": 1565178514546
+    "lastSave": 1565178969614
   },
   "VCS_STATE": {
     "provider": "GitHub",

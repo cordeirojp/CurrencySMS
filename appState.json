@@ -1,0 +1,83 @@
+{
+  "EDITOR_STATE": {
+    "allProjectFiles": {
+      "f70a17b4-1617-4526-86bb-909c196a7896": {
+        "id": "f70a17b4-1617-4526-86bb-909c196a7896",
+        "parent": null,
+        "name": "CurrencySMS",
+        "type": "DIRECTORY",
+        "isDirectory": true,
+        "children": [
+          "ca9ffc3f-ca09-4409-b440-f44d717d2e79"
+        ],
+        "isRemovable": false,
+        "filePath": "CurrencySMS"
+      },
+      "ca9ffc3f-ca09-4409-b440-f44d717d2e79": {
+        "id": "ca9ffc3f-ca09-4409-b440-f44d717d2e79",
+        "parent": "f70a17b4-1617-4526-86bb-909c196a7896",
+        "name": "lambda.js",
+        "type": "JS_LAMBDA",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "CurrencySMS/lambda.js",
+        "code": "const request = require('request-promise-native')\n\nexports.handler = function(event, context, callback) {\n    \n  request.get({\n    url: `http://api.fixer.io/latest?symbols=${CURRENCY_TO}&base=${CURRENCY_FROM}`,\n    json: true\n  })\n    .then((data) => {\n      const rate = data.rates[CURRENCY_TO]\n      console.log(`Fetched exchange rate for ${CURRENCY_FROM} -> ${CURRENCY_TO}`, rate)\n\n      // send sms with current exchange rate\n      return request.post({\n        url: `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT}/Messages.json`,\n        json: true,\n        'auth': {\n          'user': TWILIO_ACCOUNT,\n          'pass': TWILIO_API_KEY\n        },\n        form: {\n          From: SEND_SMS_FROM,\n          To: SEND_SMS_TO,\n          Body: `Today you get ${rate} ${CURRENCY_TO} for 1 ${CURRENCY_FROM}`\n        }\n      })\n    })\n    .then((data) => {\n      console.log(`Rate successfully sent through SMS to ${SEND_SMS_TO}`)\n      return callback(null, true)\n    })\n    .catch((err) => {\n      console.error(err)\n      return callback(err)\n    })\n\n    callback(null, {\"message\": \"Successfully executed\"});\n}",
+        "config": {
+          "runtime": "nodejs8.10",
+          "handler": "handler",
+          "timeout": 60,
+          "memory": 128,
+          "layers": []
+        },
+        "triggers": []
+      }
+    },
+    "deletedFiles": [],
+    "rootNode": "f70a17b4-1617-4526-86bb-909c196a7896",
+    "openFiles": [
+      "ca9ffc3f-ca09-4409-b440-f44d717d2e79"
+    ],
+    "currentFileId": "ca9ffc3f-ca09-4409-b440-f44d717d2e79",
+    "resources": {},
+    "customTemplate": {
+      "dialect": null,
+      "definitions": {}
+    },
+    "envVariables": [
+      {
+        "lambdaId": "all",
+        "varKey": "SIGMA_AWS_ACC_ID",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": false
+      }
+    ],
+    "packageJSON": {
+      "dependencies": {
+        "request-promise-native": {
+          "name": "request-promise-native",
+          "version": "1.0.7",
+          "language": "javascript"
+        }
+      }
+    }
+  },
+  "PROJECT_META": {
+    "projectName": "CurrencySMS",
+    "projectDescription": "Envoi des taux de change par SMS",
+    "projectVersion": "1.0.0",
+    "projectRegion": "eu-west-1",
+    "platform": "AWS",
+    "platformRegions": {},
+    "lastSave": 1565178514546
+  },
+  "VCS_STATE": {
+    "provider": "GitHub",
+    "repo": {
+      "name": "CurrencySMS",
+      "url": "https://github.com/cordeirojp/CurrencySMS"
+    }
+  }
+}
